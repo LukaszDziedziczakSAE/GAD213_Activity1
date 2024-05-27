@@ -27,8 +27,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-	void MoveForward();
+	void MoveForward(float AxisValue);
 
-	void MoveRight();
+	void MoveRight(float AxisValue);
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FVector Movement;
 };
