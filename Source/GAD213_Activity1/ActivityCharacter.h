@@ -26,11 +26,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	UFUNCTION()
 	void MoveForward(float AxisValue);
 
+	UFUNCTION()
 	void MoveRight(float AxisValue);
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FVector Movement;
+
+	UPROPERTY(BlueprintReadOnly, VisibleInstanceOnly)
+	float TargetRotation;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float RotationRate;
 };

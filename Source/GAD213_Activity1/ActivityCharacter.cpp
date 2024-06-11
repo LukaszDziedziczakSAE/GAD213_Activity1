@@ -18,6 +18,8 @@ void AActivityCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	TargetRotation = GetMesh()->GetRelativeRotation().Euler().Z;
+	UE_LOG(LogTemp, Warning, TEXT("StartingRotation=%s"), *GetMesh()->GetRelativeRotation().Euler().ToString());
 }
 
 // Called every frame
@@ -27,12 +29,62 @@ void AActivityCharacter::Tick(float DeltaTime)
 
 	if (Movement.Length() > 0)
 	{
-		double rad = FMath::Atan2(-Movement.Y, Movement.X);
-		double deg = rad * (180 / PI);
-		FRotator newRotation = FRotator::MakeFromEuler(FVector(0, 0, deg));
-		GetMesh()->SetRelativeRotation(newRotation);
+		TargetRotation = (FMath::Atan2(-Movement.Y, Movement.X)) * (180 / PI);
+		
+	}
+
+	float CurrentRoll = GetMesh()->GetRelativeRotation().Euler().Z;
+
+	if (CurrentRoll != TargetRotation)
+	{
+		float Differance = TargetRotation - CurrentRoll;
+		float step = (RotationRate * DeltaTime);
+		UE_LOG(LogTemp, Warning, TEXT("CurrentRoll=%f, TargetRotation=%f, Differance=%f"), CurrentRoll, TargetRotation, Differance);
+
+		if (Differance < (step*1.5) && Differance > -(step*1.5))
+		{
+			GetMesh()->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0, 0, TargetRotation)));
+			UE_LOG(LogTemp, Warning, TEXT("Inside Step=%f"), step);
+		}
+		else
+		{
+			if ((Differance < 0 && Differance > -180) || Differance > 180)
+			{
+				float NewRoll = CurrentRoll - step;
+
+				GetMesh()->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0, 0, NewRoll)));
+				UE_LOG(LogTemp, Warning, TEXT("NewRoll=%f, Step=%f"), NewRoll, step);
+			}
+			else
+			{
+				float NewRoll = CurrentRoll + step;
+
+				GetMesh()->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0, 0, NewRoll)));
+				UE_LOG(LogTemp, Warning, TEXT("NewRoll=%f, Step=%f"), NewRoll, step);
+			}
+
+			
+		}
 	}
 	
+	
+
+	/*if (CurrentRoll > TargetRotation)
+	{
+		double NewRoll = CurrentRoll + (RotationRate * DeltaTime);
+		FRotator NewRotator = FRotator::MakeFromEuler(FVector(0, 0, NewRoll));
+
+		GetMesh()->SetRelativeRotation(NewRotator);
+		UE_LOG(LogTemp, Warning, TEXT("NewRotation=%s"), *GetMesh()->GetRelativeRotation().Euler().ToString());
+	}
+	else if (CurrentRoll < TargetRotation)
+	{
+		double NewRoll = CurrentRoll + -(RotationRate * DeltaTime);
+		FRotator NewRotator = FRotator::MakeFromEuler(FVector(0, 0, NewRoll));
+
+		GetMesh()->SetRelativeRotation(NewRotator);
+		UE_LOG(LogTemp, Warning, TEXT("NewRotation=%s"), *GetMesh()->GetRelativeRotation().Euler().ToString());
+	}*/
 }
 
 // Called to bind functionality to input
