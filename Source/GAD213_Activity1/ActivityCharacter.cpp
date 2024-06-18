@@ -11,6 +11,7 @@ AActivityCharacter::AActivityCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CharactersScanner = CreateDefaultSubobject<UCharactersScanner>(TEXT("Characters Scanner"));
 }
 
 // Called when the game starts or when spawned
@@ -19,7 +20,7 @@ void AActivityCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	TargetRotation = GetMesh()->GetRelativeRotation().Euler().Z;
-	UE_LOG(LogTemp, Warning, TEXT("StartingRotation=%s"), *GetMesh()->GetRelativeRotation().Euler().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("StartingRotation=%s"), *GetMesh()->GetRelativeRotation().Euler().ToString());
 }
 
 // Called every frame
@@ -70,16 +71,34 @@ void AActivityCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AActivityCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AActivityCharacter::MoveRight);
+
+	PlayerInputComponent->BindAction(TEXT("Scanner"), EInputEvent::IE_Pressed, this, &AActivityCharacter::ScanButtonPress);
 }
 
 void AActivityCharacter::MoveForward(float AxisValue)
 {
+	if (CharactersScanner->ShowingResults || CharactersScanner->ScanInProgress) return;
+
 	AddMovementInput(GetActorForwardVector() * AxisValue);
 	Movement.Y = AxisValue;
 }
 
 void AActivityCharacter::MoveRight(float AxisValue)
 {
+	if (CharactersScanner->ShowingResults || CharactersScanner->ScanInProgress) return;
+
 	AddMovementInput(GetActorRightVector() * AxisValue);
 	Movement.X = AxisValue;
+}
+
+void AActivityCharacter::ScanButtonPress()
+{
+	if (CharactersScanner->ShowingResults || CharactersScanner->ScanInProgress)
+	{
+		CharactersScanner->CloseScan();
+	}
+	else
+	{
+		CharactersScanner->BeginScan();
+	}
 }

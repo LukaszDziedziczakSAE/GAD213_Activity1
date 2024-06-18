@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharactersScanner.h"
 #include "ActivityCharacter.generated.h"
 
 UCLASS()
@@ -40,4 +41,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	float RotationRate;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UCharactersScanner* CharactersScanner;
+
+	UFUNCTION()
+	void ScanButtonPress();
 };
