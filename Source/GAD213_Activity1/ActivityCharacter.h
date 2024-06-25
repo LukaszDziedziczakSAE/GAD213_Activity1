@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharactersScanner.h"
+#include "CharacterCombat.h"
+#include "HealthComponent.h"
 #include "ActivityCharacter.generated.h"
 
 UCLASS()
@@ -45,6 +47,20 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UCharactersScanner* CharactersScanner;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UCharacterCombat* CharacterCombat;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UHealthComponent* Health;
+
 	UFUNCTION()
 	void ScanButtonPress();
+
+	UFUNCTION()
+	void InteractButtonPress();
+	UFUNCTION()
+	void InteractButtonRelease();
+
+	UFUNCTION()
+	float GetCurrentMeshRotation();
 };

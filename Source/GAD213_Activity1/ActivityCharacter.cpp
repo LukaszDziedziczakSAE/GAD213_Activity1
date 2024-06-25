@@ -12,6 +12,10 @@ AActivityCharacter::AActivityCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CharactersScanner = CreateDefaultSubobject<UCharactersScanner>(TEXT("Characters Scanner"));
+
+	CharacterCombat = CreateDefaultSubobject<UCharacterCombat>(TEXT("Characters Combat"));
+
+	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 }
 
 // Called when the game starts or when spawned
@@ -73,6 +77,8 @@ void AActivityCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AActivityCharacter::MoveRight);
 
 	PlayerInputComponent->BindAction(TEXT("Scanner"), EInputEvent::IE_Pressed, this, &AActivityCharacter::ScanButtonPress);
+	PlayerInputComponent->BindAction(TEXT("Interact"), EInputEvent::IE_Pressed, this, &AActivityCharacter::InteractButtonPress);
+	PlayerInputComponent->BindAction(TEXT("Interact"), EInputEvent::IE_Released, this, &AActivityCharacter::InteractButtonRelease);
 }
 
 void AActivityCharacter::MoveForward(float AxisValue)
@@ -101,4 +107,19 @@ void AActivityCharacter::ScanButtonPress()
 	{
 		CharactersScanner->BeginScan();
 	}
+}
+
+void AActivityCharacter::InteractButtonPress()
+{
+	CharacterCombat->InteractButtonPress();
+}
+
+void AActivityCharacter::InteractButtonRelease()
+{
+	CharacterCombat->InteractButtonReleased();
+}
+
+float AActivityCharacter::GetCurrentMeshRotation()
+{
+	return GetMesh()->GetRelativeRotation().Euler().Z + 90;
 }

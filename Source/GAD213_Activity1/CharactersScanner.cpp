@@ -134,7 +134,7 @@ float UCharactersScanner::GetResultDirection()
 	
 	FVector Vector = GetOwner()->GetActorLocation() - MineralArea->GetActorLocation();
 	float Direction = (FMath::Atan2(Vector.Y, Vector.X)) * (180 / PI);
-	return Direction;
+	return Direction + 180;
 }
 
 int UCharactersScanner::GetResultsGrade()
